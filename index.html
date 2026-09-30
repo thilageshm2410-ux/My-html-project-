@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Leave Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f4;--panel:#fff;--ink:#14212b;--mute:#5b6b78;--line:#dbe2e8;--brand:#0f766e;--brand-d:#0b5c56;--side:#12303a;--warn:#b45309;--ok:#15803d;--bad:#b91c1c;--pend-bg:#fdf1d8;--ok-bg:#dcf3e3;--bad-bg:#fbe1e1;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e161c;--panel:#16222b;--ink:#e6edf2;--mute:#93a4b1;--line:#263743;--brand:#2dd4bf;--brand-d:#5eead4;--side:#0a1217;--pend-bg:#3a2d10;--ok-bg:#12321f;--bad-bg:#3a1717;--ok:#4ade80;--bad:#f87171;--warn:#fbbf24}}
+:root[data-theme="dark"]{--bg:#0e161c;--panel:#16222b;--ink:#e6edf2;--mute:#93a4b1;--line:#263743;--brand:#2dd4bf;--brand-d:#5eead4;--side:#0a1217;--pend-bg:#3a2d10;--ok-bg:#12321f;--bad-bg:#3a1717;--ok:#4ade80;--bad:#f87171;--warn:#fbbf24}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.hide{display:none!important}
+/* login */
+.login{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.hero{background:var(--side);color:#e6f2f1;padding:56px;display:flex;flex-direction:column;justify-content:space-between}
+.hero h1{font-size:clamp(30px,4vw,48px);line-height:1.1;font-weight:700;max-width:14ch;letter-spacing:-.02em}
+.hero p{color:#9fbdc0;max-width:38ch;margin-top:14px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;max-width:320px;margin-top:30px}
+.cal i{aspect-ratio:1;border-radius:6px;background:#1c4552}
+.cal i.a{background:#2dd4bf}.cal i.b{background:#e8a33d}.cal i.c{background:#2b6473}
+.login-form{display:flex;align-items:center;justify-content:center;padding:32px}
+.login-box{width:100%;max-width:360px}
+.login-box h2{font-size:24px;margin-bottom:6px}
+.login-box .sub{color:var(--mute);margin-bottom:22px}
+.demo{margin-top:18px;font-size:13px;color:var(--mute);border-top:1px solid var(--line);padding-top:14px}
+.demo button{background:none;border:0;color:var(--brand);cursor:pointer;text-decoration:underline;padding:0}
+/* layout */
+.app{display:flex;min-height:100vh}
+.side{width:230px;background:var(--side);color:#cfe3e3;padding:22px 14px;position:fixed;top:0;bottom:0;left:0;display:flex;flex-direction:column;gap:4px;overflow-y:auto}
+.brand{font-weight:700;font-size:18px;color:#fff;padding:4px 10px 20px}
+.nav{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 12px;border:0;border-radius:8px;background:none;color:inherit;text-align:left;cursor:pointer}
+.nav:hover{background:#1c4552}.nav.on{background:var(--brand);color:#04201d;font-weight:600}
+.badge{background:var(--warn);color:#fff;border-radius:99px;font-size:11px;padding:0 7px;font-weight:700}
+.side .sp{flex:1}
+.main{margin-left:230px;width:calc(100% - 230px);padding:28px 32px 48px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.top h1{font-size:26px;letter-spacing:-.01em}.top p{color:var(--mute)}
+.who{display:flex;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--brand);color:#04201d;display:grid;place-items:center;font-weight:700}
+.who small{display:block;color:var(--mute);font-size:12px;line-height:1.2}
+.icon-btn{background:none;border:1px solid var(--line);border-radius:8px;padding:6px 9px;cursor:pointer}
+/* balances */
+.bal{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.b{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.b h3{font-size:13px;font-weight:500;color:var(--mute)}
+.b .n{font-size:30px;font-weight:700;margin:2px 0 8px}.b .n small{font-size:14px;font-weight:400;color:var(--mute)}
+.bar{height:6px;background:var(--line);border-radius:9px;overflow:hidden}.bar span{display:block;height:100%;background:var(--brand)}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13px}
+.chip b{margin-left:4px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px;margin-bottom:22px}
+.panel h2{font-size:17px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.f{display:flex;flex-direction:column;gap:6px}.f.full{grid-column:1/-1}
+label{font-size:13px;font-weight:600}
+input,select,textarea{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);width:100%}
+textarea{min-height:90px;resize:vertical}
+input[readonly]{background:var(--bg)}
+.hint{font-size:12px;color:var(--mute)}
+.btn{padding:10px 18px;border:0;border-radius:8px;font-weight:600;cursor:pointer}
+.btn.p{background:var(--brand);color:#04201d}.btn.p:hover{background:var(--brand-d);color:#fff}
+.btn.s{padding:6px 12px;font-size:13px;background:none;border:1px solid var(--line)}
+.btn.ok{background:var(--ok);color:#fff}.btn.no{background:var(--bad);color:#fff}
+.btn.s.ok,.btn.s.no{border:0}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:620px}
+th,td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
+th{color:var(--mute);font-weight:600;font-size:13px}
+.st{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.Pending{background:var(--pend-bg);color:var(--warn)}.Approved{background:var(--ok-bg);color:var(--ok)}.Rejected{background:var(--bad-bg);color:var(--bad)}
+.empty{text-align:center;color:var(--mute);padding:28px!important}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.toast{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:8px;z-index:9;max-width:80vw}
+.err{color:var(--bad);font-size:13px;min-height:18px;margin-bottom:8px}
+@media(max-width:900px){.bal{grid-template-columns:repeat(2,1fr)}.login{grid-template-columns:1fr}.hero{display:none}}
+@media(max-width:700px){.side{width:62px;padding:14px 6px}.brand,.nav span.t{display:none}.nav{justify-content:center}.main{margin-left:62px;width:calc(100% - 62px);padding:18px 14px 40px}.grid{grid-template-columns:1fr}.bal{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:no-preference){.toast{animation:in .2s ease-out}@keyframes in{from{transform:translateY(8px);opacity:0}}}
+</style>
+</head>
+<body>
+
+<div id="login" class="login">
+  <div class="hero">
+    <div>
+      <div class="brand" style="padding:0">Leave Management</div>
+    </div>
+    <div>
+      <h1>Time off, without the back-and-forth.</h1>
+      <p>Request leave, track balances, and approve your team's requests in one place.</p>
+      <div class="cal" aria-hidden="true"><i></i><i></i><i class="c"></i><i class="a"></i><i class="a"></i><i></i><i></i><i class="c"></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i class="c"></i><i></i><i></i><i class="a"></i><i></i><i></i></div>
+    </div>
+  </div>
+  <div class="login-form">
+    <form class="login-box" id="loginForm">
+      <h2>Sign in</h2>
+      <p class="sub">Use your employee ID and password.</p>
+      <div class="f"><label for="lid">Employee ID</label><input id="lid" autocomplete="username" required></div>
+      <div class="f" style="margin-top:14px"><label for="lpw">Password</label><input id="lpw" type="password" autocomplete="current-password" required></div>
+      <div class="err" id="lerr" role="alert"></div>
+      <button class="btn p" style="width:100%" type="submit">Sign in</button>
+      <div class="demo">Demo accounts:<br>
+        <button type="button" data-fill="EMP001">EMP001</button> (employee) ·
+        <button type="button" data-fill="EMP002">EMP002</button> (employee) ·
+        <button type="button" data-fill="MGR001">MGR001</button> (manager)<br>Password for all: 1234</div>
+    </form>
+  </div>
+</div>
+
+<div id="app" class="app hide">
+  <aside class="side">
+    <div class="brand">Leave Management</div>
+    <button class="nav on" data-s="dashboard"><span class="t">Dashboard</span><span aria-hidden="true">▦</span></button>
+    <button class="nav" data-s="apply"><span class="t">Apply for leave</span><span aria-hidden="true">+</span></button>
+    <button class="nav" data-s="history"><span class="t">My requests</span><span aria-hidden="true">≡</span></button>
+    <button class="nav hide" data-s="approvals" id="navAp"><span class="t">Approvals <span class="badge" id="apCount">0</span></span><span aria-hidden="true">✓</span></button>
+    <button class="nav" data-s="profile"><span class="t">Profile</span><span aria-hidden="true">●</span></button>
+    <div class="sp"></div>
+    <button class="nav" id="logout"><span class="t">Sign out</span><span aria-hidden="true">⏻</span></button>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <div><h1 id="title">Dashboard</h1><p id="welcome"></p></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="icon-btn" id="theme" aria-label="Toggle dark mode">◐</button>
+        <div class="who"><div class="av" id="av"></div><div><b id="uname"></b><small id="urole"></small></div></div>
+      </div>
+    </div>
+
+    <section id="dashboard">
+      <div class="bal" id="bal"></div>
+      <div class="stats" id="stats"></div>
+      <div class="panel"><h2>Recent requests</h2>
+        <div class="tw"><table><thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Status</th></tr></thead><tbody id="dashT"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="apply" class="hide">
+      <div class="panel"><h2>Apply for leave</h2>
+        <form id="lf" class="grid">
+          <div class="f"><label for="type">Leave type</label><select id="type" required></select><span class="hint" id="avail"></span></div>
+          <div class="f"><label for="phone">Contact number</label><input id="phone" type="tel" required placeholder="+1 555 0100"></div>
+          <div class="f"><label for="from">From</label><input id="from" type="date" required></div>
+          <div class="f"><label for="to">To</label><input id="to" type="date" required></div>
+          <div class="f"><label for="days">Working days</label><input id="days" readonly placeholder="Calculated from dates"><span class="hint">Weekends are not counted.</span></div>
+          <div class="f full"><label for="reason">Reason</label><textarea id="reason" required maxlength="300" placeholder="Briefly describe why you need leave"></textarea></div>
+          <div class="err full" id="ferr" role="alert"></div>
+          <div class="f full"><div><button class="btn p" type="submit">Submit request</button></div></div>
+        </form>
+      </div>
+    </section>
+
+    <section id="history" class="hide">
+      <div class="panel"><h2>My requests</h2>
+        <div class="tw"><table><thead><tr><th>#</th><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Status</th><th></th></tr></thead><tbody id="histT"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="approvals" class="hide">
+      <div class="panel"><h2>Team requests</h2>
+        <div class="tw"><table><thead><tr><th>Employee</th><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Status</th><th></th></tr></thead><tbody id="apT"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="profile" class="hide">
+      <div class="panel"><h2>Employee profile</h2>
+        <div class="grid" id="prof"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const USERS={
+  EMP001:{id:"EMP001",pw:"1234",name:"John Doe",role:"Employee",email:"john@example.com",dept:"Information Technology",title:"Software Developer",joined:"2024-06-10"},
+  EMP002:{id:"EMP002",pw:"1234",name:"Priya Nair",role:"Employee",email:"priya@example.com",dept:"Design",title:"Product Designer",joined:"2023-02-01"},
+  MGR001:{id:"MGR001",pw:"1234",name:"Maria Lopez",role:"Manager",email:"maria@example.com",dept:"Operations",title:"Operations Manager",joined:"2021-09-15"}
+};
+const QUOTA={"Casual Leave":10,"Sick Leave":8,"Earned Leave":12,"Emergency Leave":4};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let mem=[],me=null;
+
+function load(){try{const v=localStorage.getItem("lms.requests");return v?JSON.parse(v):mem}catch(e){return mem}}
+function save(l){mem=l;try{localStorage.setItem("lms.requests",JSON.stringify(l))}catch(e){}}
+function toast(m){const t=document.createElement("div");t.className="toast";t.textContent=m;t.setAttribute("role","status");document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+const fmt=d=>new Date(d+"T00:00").toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});
+const range=r=>r.from===r.to?fmt(r.from):fmt(r.from)+" – "+fmt(r.to);
+function workdays(a,b){let n=0;for(let d=new Date(a+"T00:00"),e=new Date(b+"T00:00");d<=e;d.setDate(d.getDate()+1)){const w=d.getDay();if(w&&w<6)n++}return n}
+
+/* auth */
+$("loginForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const u=USERS[$("lid").value.trim().toUpperCase()];
+  if(!u||u.pw!==$("lpw").value){$("lerr").textContent="Employee ID or password is incorrect.";return}
+  me=u;$("lerr").textContent="";
+  $("login").classList.add("hide");$("app").classList.remove("hide");
+  $("uname").textContent=u.name;$("urole").textContent=u.role+" · "+u.id;$("av").textContent=u.name[0];
+  $("welcome").textContent="Welcome back, "+u.name.split(" ")[0]+".";
+  $("navAp").classList.toggle("hide",u.role!=="Manager");
+  $("type").innerHTML='<option value="">Select leave type</option>'+Object.keys(QUOTA).map(k=>`<option>${k}</option>`).join("");
+  show("dashboard");
+});
+document.querySelectorAll("[data-fill]").forEach(b=>b.onclick=()=>{$("lid").value=b.dataset.fill;$("lpw").value="1234"});
+$("logout").onclick=()=>{me=null;$("app").classList.add("hide");$("login").classList.remove("hide");$("lid").value=$("lpw").value=""};
+$("theme").onclick=()=>{const r=document.documentElement,d=matchMedia("(prefers-color-scheme:dark)").matches;const cur=r.dataset.theme||(d?"dark":"light");r.dataset.theme=cur==="dark"?"light":"dark"};
+
+/* nav */
+const TITLES={dashboard:"Dashboard",apply:"Apply for leave",history:"My requests",approvals:"Approvals",profile:"Profile"};
+document.querySelectorAll(".nav[data-s]").forEach(b=>b.onclick=()=>show(b.dataset.s));
+function show(s){
+  ["dashboard","apply","history","approvals","profile"].forEach(x=>$(x).classList.toggle("hide",x!==s));
+  document.querySelectorAll(".nav[data-s]").forEach(b=>b.classList.toggle("on",b.dataset.s===s));
+  $("title").textContent=TITLES[s];
+  render();
+}
+
+/* data helpers */
+const mine=()=>load().filter(r=>r.empId===me.id);
+function used(type){return mine().filter(r=>r.type===type&&r.status!=="Rejected").reduce((a,r)=>a+r.days,0)}
+const badge=s=>`<span class="st ${s}">${s}</span>`;
+
+function render(){
+  if(!me)return;
+  const all=load(),m=mine();
+  // balances
+  $("bal").innerHTML=Object.entries(QUOTA).map(([k,q])=>{const u=used(k),left=q-u;
+    return `<div class="b"><h3>${k}</h3><div class="n">${left} <small>of ${q} days left</small></div><div class="bar"><span style="width:${Math.min(100,u/q*100)}%"></span></div></div>`}).join("");
+  const c=s=>m.filter(r=>r.status===s).length;
+  $("stats").innerHTML=["Pending","Approved","Rejected"].map(s=>`<span class="chip">${s}<b>${c(s)}</b></span>`).join("");
+  const rec=[...m].reverse().slice(0,5);
+  $("dashT").innerHTML=rec.length?rec.map(r=>`<tr><td>${esc(r.type)}</td><td>${range(r)}</td><td>${r.days}</td><td>${badge(r.status)}</td></tr>`).join(""):`<tr><td colspan="4" class="empty">No requests yet. Use “Apply for leave” to submit your first one.</td></tr>`;
+  // history
+  $("histT").innerHTML=m.length?m.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.type)}</td><td>${range(r)}</td><td>${r.days}</td><td>${esc(r.reason)}</td><td>${badge(r.status)}</td><td>${r.status==="Pending"?`<button class="btn s" data-cancel="${r.id}">Cancel</button>`:""}</td></tr>`).join(""):`<tr><td colspan="7" class="empty">No leave requests found.</td></tr>`;
+  // approvals
+  if(me.role==="Manager"){
+    const t=all.filter(r=>r.empId!==me.id);
+    const p=t.filter(r=>r.status==="Pending").length;
+    $("apCount").textContent=p;$("apCount").classList.toggle("hide",!p);
+    const sorted=[...t].sort((a,b)=>(a.status==="Pending"?0:1)-(b.status==="Pending"?0:1));
+    $("apT").innerHTML=sorted.length?sorted.map(r=>`<tr><td>${esc(r.empName)}<br><span class="hint">${esc(r.empId)}</span></td><td>${esc(r.type)}</td><td>${range(r)}</td><td>${r.days}</td><td>${esc(r.reason)}</td><td>${badge(r.status)}</td><td>${r.status==="Pending"?`<div class="actions"><button class="btn s ok" data-dec="Approved" data-id="${r.id}">Approve</button><button class="btn s no" data-dec="Rejected" data-id="${r.id}">Reject</button></div>`:""}</td></tr>`).join(""):`<tr><td colspan="7" class="empty">No requests from your team yet.</td></tr>`;
+  }
+  // profile
+  const P=[["Employee ID",me.id],["Name",me.name],["Email",me.email],["Department",me.dept],["Designation",me.title],["Joined",fmt(me.joined)]];
+  $("prof").innerHTML=P.map(([k,v])=>`<div class="f"><label>${k}</label><input value="${esc(v)}" readonly></div>`).join("");
+  updateAvail();
+}
+
+document.addEventListener("click",e=>{
+  const c=e.target.closest("[data-cancel]");
+  if(c&&confirm("Cancel this leave request?")){save(load().filter(r=>r.id!=c.dataset.cancel));toast("Request cancelled");render()}
+  const d=e.target.closest("[data-dec]");
+  if(d){save(load().map(r=>r.id==d.dataset.id?{...r,status:d.dataset.dec,decidedBy:me.name}:r));toast("Request "+d.dataset.dec.toLowerCase());render()}
+});
+
+/* apply form */
+function calc(){
+  const f=$("from").value,t=$("to").value;
+  if(f)$("to").min=f;
+  if(!f||!t){$("days").value="";return}
+  $("days").value=t<f?"":workdays(f,t);
+  $("ferr").textContent=t<f?"To date can’t be before the From date.":"";
+}
+function updateAvail(){
+  const k=$("type").value;
+  $("avail").textContent=k?`${QUOTA[k]-used(k)} of ${QUOTA[k]} days available`:"";
+}
+["from","to"].forEach(i=>$(i).addEventListener("change",calc));
+$("type").addEventListener("change",updateAvail);
+$("lf").addEventListener("submit",e=>{
+  e.preventDefault();
+  const type=$("type").value,from=$("from").value,to=$("to").value,days=Number($("days").value);
+  const err=m=>{$("ferr").textContent=m};
+  if(!days)return err(to<from?"To date can’t be before the From date.":"Selected dates contain no working days.");
+  if(days>QUOTA[type]-used(type))return err(`You only have ${QUOTA[type]-used(type)} day(s) of ${type} left.`);
+  const clash=mine().find(r=>r.status!=="Rejected"&&from<=r.to&&to>=r.from);
+  if(clash)return err(`These dates overlap your ${clash.type} request (${range(clash)}).`);
+  const l=load();
+  l.push({id:Date.now(),empId:me.id,empName:me.name,type,from,to,days,phone:$("phone").value,reason:$("reason").value.trim(),status:"Pending",appliedOn:new Date().toISOString().slice(0,10)});
+  save(l);err("");$("lf").reset();$("days").value="";
+  toast("Leave request submitted");show("history");
+});
+</script>
+</body>
+</html>
